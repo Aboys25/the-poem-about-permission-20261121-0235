@@ -28,8 +28,11 @@ with open(DEST, "w", encoding="utf-8", newline="\n") as fh:
     fh.write(POEM)
 
 # Sanity check: the gate requires 1-280 Unicode code points, not only
-# whitespace, and valid UTF-8.
-text = POEM
+# whitespace, and valid UTF-8. Validate the text actually written to
+# entry.txt (read back from disk) rather than the in-memory literal,
+# so a write failure or encoding slip cannot pass silently.
+with open(DEST, encoding="utf-8") as fh:
+    text = fh.read()
 if not (1 <= len(text) <= 280):
     raise SystemExit("entry.txt length %d outside 1-280 code points" % len(text))
 if not text.strip():
